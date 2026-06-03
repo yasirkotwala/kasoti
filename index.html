@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="ur">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>کسوٹی طرز: 20 سوالوں میں شخصیت پہچانیے</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: system-ui, 'Segoe UI', 'Poppins', 'Roboto', sans-serif;
+        }
+        body {
+            background: linear-gradient(145deg, #1a2a3a 0%, #0f1a24 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            margin: 0;
+        }
+        .game-container {
+            max-width: 1300px;
+            width: 100%;
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(2px);
+            border-radius: 3rem;
+            padding: 1.5rem;
+            box-shadow: 0 25px 45px rgba(0,0,0,0.3), 0 0 0 1px rgba(255,255,255,0.2);
+        }
+        .game-panels {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.8rem;
+        }
+        .host-panel, .guesser-panel {
+            background: #fef9e8;
+            border-radius: 2rem;
+            padding: 1.5rem;
+            box-shadow: 0 12px 28px rgba(0,0,0,0.2);
+            flex: 1;
+            min-width: 280px;
+            transition: all 0.2s;
+        }
+        .host-panel {
+            background: #e9f0e6;
+            border-left: 8px solid #2c7a47;
+        }
+        .guesser-panel {
+            background: #fff6e0;
+            border-left: 8px solid #d97706;
+        }
+        h2 {
+            font-size: 1.7rem;
+            margin-top: 0;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #1e293b;
+            border-bottom: 3px dotted #cbd5e1;
+            padding-bottom: 8px;
+        }
+        .badge {
+            background: #2c3e50;
+            color: white;
+            font-size: 0.8rem;
+            padding: 4px 12px;
+            border-radius: 50px;
+            font-weight: normal;
+        }
+        .secret-area {
+            background: #2d3e2b;
+            padding: 1rem;
+            border-radius: 1.5rem;
+            margin: 15px 0;
+            color: #fef9c3;
+            text-align: center;
+        }
+        .personality-name {
+            font-size: 1.9rem;
+            font-weight: bold;
+            font-family: monospace;
+            letter-spacing: 1px;
+            background: #00000055;
+            display: inline-block;
+            padding: 0 18px;
+            border-radius: 60px;
+            color: #ffec9f;
+        }
+        .hide-toggle {
+            background: #1e293b;
+            border: none;
+            color: white;
+            padding: 6px 15px;
+            border-radius: 60px;
+            cursor: pointer;
+            margin-top: 10px;
+            font-size: 0.8rem;
+            transition: 0.2s;
+        }
+        select, button {
+            background: #334155;
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 40px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+            font-size: 0.9rem;
+        }
+        select {
+            background: #1e293b;
+            width: 70%;
+        }
+        button:hover {
+            background: #0f172a;
+            transform: scale(0.97);
+        }
+        .question-area {
+            margin: 20px 0;
+        }
+        input {
+            width: 100%;
+            padding: 12px 16px;
+            border-radius: 80px;
+            border: 2px solid #e2e8f0;
+            font-size: 1rem;
+            margin: 8px 0;
+            background: white;
+        }
+        .btn-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 10px 0;
+        }
+        .btn-primary {
+            background: #d97706;
+            color: white;
+            flex: 1;
+        }
+        .btn-secondary {
+            background: #4b5563;
+        }
+        .chat-log {
+            background: #f1f5f9;
+            border-radius: 1.5rem;
+            padding: 1rem;
+            height: 280px;
+            overflow-y: auto;
+            font-size: 0.9rem;
+            margin: 20px 0;
+            border: 1px solid #cbd5e1;
+        }
+        .chat-entry {
+            margin-bottom: 12px;
+            border-left: 3px solid;
+            padding-left: 12px;
+        }
+        .question-msg {
+            border-left-color: #3b82f6;
+            color: #1e3a8a;
+        }
+        .answer-msg {
+            border-left-color: #16a34a;
+            color: #14532d;
+        }
+        .guess-msg {
+            border-left-color: #eab308;
+            color: #854d0e;
+        }
+        .counter {
+            font-weight: bold;
+            background: #0f172a;
+            display: inline-block;
+            padding: 6px 18px;
+            border-radius: 30px;
+            color: white;
+            margin-bottom: 12px;
+        }
+        .result-area {
+            font-weight: bold;
+            text-align: center;
+            background: #facc15;
+            padding: 8px;
+            border-radius: 60px;
+            margin-top: 12px;
+        }
+        footer {
+            text-align: center;
+            font-size: 0.75rem;
+            margin-top: 1rem;
+            color: #e2e8f0;
+        }
+        @media (max-width: 780px) {
+            .personality-name { font-size: 1.3rem; }
+            h2 { font-size: 1.3rem; }
+        }
+        .can-say-badge {
+            background: #f97316;
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+<div class="game-container">
+    <div class="game-panels">
+        <!-- HOST PANEL : جس میں شخصیت کا انتخاب ہوگا (گوگل انسائیکلوپیڈیا طرز) -->
+        <div class="host-panel">
+            <h2>🎭 میزبان (مَیں) <span class="badge">شخصیت منتخب کرو</span></h2>
+            <p>🔍 <strong>گوگل انسائیکلوپیڈیا</strong> سے ماخوذ ڈیٹا — معروف شخصیات کی درست معلومات</p>
+            <div class="secret-area">
+                <div style="font-size: 0.8rem;">🌟 خفیہ شخصیت (صرف آپ دیکھیں) :</div>
+                <div id="secretPersonalityDisplay" class="personality-name">———</div>
+                <button id="toggleHideBtn" class="hide-toggle">👁️ چھپائیں / دکھائیں</button>
+                <div style="font-size:12px; margin-top:8px;">✨ دوست اندازہ لگائیں، کمپیوٹر جواب دے گا</div>
+            </div>
+            <label>📖 شخصیت منتخب کریں (انسائیکلوپیڈیا سے):</label>
+            <select id="personalitySelect"></select>
+            <button id="applyPersonalityBtn">✅ شخصیت سیٹ کریں & نئے کھیل شروع کریں</button>
+            <div style="margin-top: 12px; background:#d9e3cc; border-radius: 20px; padding: 8px; font-size:13px;">
+                💡 <strong>میزبان نوٹ:</strong> آپ جو شخصیت چنیں گے، کمپیوٹر اُسی کے مطابق جواب "ہاں/نہیں/کہہ سکتے ہیں" میں دے گا۔ دوست 20 سوالات میں پہچانے گا۔
+            </div>
+        </div>
+
+        <!-- GUESSER PANEL : دوست سوال پوچھے گا، کمپیوٹر جواب -->
+        <div class="guesser-panel">
+            <h2>🤔 دوست (اندازہ لگانے والا) <span class="badge">20 سوالات</span></h2>
+            <div class="counter" id="questionCounter">سوالات: 0 / 20</div>
+            <div class="question-area">
+                <input type="text" id="questionInput" placeholder="مثال: کیا یہ شخصیت مرد ہے؟ / کیا یہ زندہ ہے؟ / کیا یہ سائنسدان ہے؟" autocomplete="off">
+                <div class="btn-group">
+                    <button id="askBtn" class="btn-primary">❓ سوال پوچھیں</button>
+                    <button id="guessBtn" class="btn-secondary">🎯 اندازہ لگائیں (نام لکھیں)</button>
+                </div>
+                <input type="text" id="guessNameInput" placeholder="شخصیت کا نام لکھیں... مثال: Albert Einstein">
+                <button id="resetGameBtn" style="background:#2c3e50; width:100%; margin-top:8px;">🔄 کھیل دوبارہ شروع کریں</button>
+            </div>
+
+            <div class="chat-log" id="chatLog">
+                <div class="chat-entry answer-msg">🎤 کھیل شروع! میزبان نے ایک شخصیت سوچی۔ 20 سوالوں میں پہچانیے۔</div>
+                <div class="chat-entry answer-msg">💡 ہر سوال پر کمپیوٹر "ہاں", "نہیں" یا "کہہ سکتے ہیں" میں جواب دے گا۔</div>
+            </div>
+            <div id="gameStatusMsg" class="result-area">⚡ کھیل جاری ہے ...</div>
+        </div>
+    </div>
+    <footer>📚 ذہین شخصیات کا ڈیٹا گوگل انسائیکلوپیڈیا / معتبر مآخذ سے مرتب | جوابات ہاں/نہیں/ممکنہ حد تک</footer>
+</div>
+
+<script>
+    // ---------- گوگل انسائیکلوپیڈیا طرز کا ڈیٹا بیس (مکمل خصوصیات) ----------
+    // ہر شخصیت کے لیے تفصیلی صفات تاکہ کمپیوٹر ہاں/نہیں/کہہ سکتے ہیں میں جواب دے سکے
+    const PERSONALITIES_DATA = [
+        { id: 1, name: "Albert Einstein", gender: "male", professionTags: ["scientist","physicist","theorist"], nationality: "German-American", alive: false, birthYear: 1879, deathYear: 1955, field: "natural sciences" },
+        { id: 2, name: "Marie Curie", gender: "female", professionTags: ["scientist","chemist","physicist"], nationality: "Polish-French", alive: false, birthYear: 1867, deathYear: 1934, field: "science" },
+        { id: 3, name: "Leonardo da Vinci", gender: "male", professionTags: ["artist","inventor","painter"], nationality: "Italian", alive: false, birthYear: 1452, deathYear: 1519, field: "art & invention" },
+        { id: 4, name: "Michael Jordan", gender: "male", professionTags: ["athlete","basketball player"], nationality: "American", alive: true, birthYear: 1963, deathYear: null, field: "sports" },
+        { id: 5, name: "Taylor Swift", gender: "female", professionTags: ["singer","songwriter","musician"], nationality: "American", alive: true, birthYear: 1989, deathYear: null, field: "music" },
+        { id: 6, name: "Cristiano Ronaldo", gender: "male", professionTags: ["athlete","footballer"], nationality: "Portuguese", alive: true, birthYear: 1985, deathYear: null, field: "sports" },
+        { id: 7, name: "William Shakespeare", gender: "male", professionTags: ["writer","playwright","poet"], nationality: "British", alive: false, birthYear: 1564, deathYear: 1616, field: "literature" },
+        { id: 8, name: "Elon Musk", gender: "male", professionTags: ["entrepreneur","engineer","innovator"], nationality: "South African-American", alive: true, birthYear: 1971, deathYear: null, field: "business" },
+        { id: 9, name: "Cleopatra", gender: "female", professionTags: ["ruler","pharaoh","politician"], nationality: "Egyptian", alive: false, birthYear: -69, deathYear: -30, field: "history" },
+        { id: 10, name: "Barack Obama", gender: "male", professionTags: ["politician","president","lawyer"], nationality: "American", alive: true, birthYear: 1961, deathYear: null, field: "politics" },
+        { id: 11, name: "Lionel Messi", gender: "male", professionTags: ["athlete","footballer"], nationality: "Argentinian", alive: true, birthYear: 1987, deathYear: null, field: "sports" },
+        { id: 12, name: "Oprah Winfrey", gender: "female", professionTags: ["media personality","talk show host","philanthropist"], nationality: "American", alive: true, birthYear: 1954, deathYear: null, field: "media" },
+        { id: 13, name: "Abdul Sattar Edhi", gender: "male", professionTags: ["philanthropist","humanitarian"], nationality: "Pakistani", alive: false, birthYear: 1928, deathYear: 2016, field: "social work" },
+        { id: 14, name: "Malala Yousafzai", gender: "female", professionTags: ["activist","nobel laureate"], nationality: "Pakistani", alive: true, birthYear: 1997, deathYear: null, field: "activism" },
+        { id: 15, name: "Stephen Hawking", gender: "male", professionTags: ["scientist","cosmologist","physicist"], nationality: "British", alive: false, birthYear: 1942, deathYear: 2018, field: "science" },
+        { id: 16, name: "Priyanka Chopra", gender: "female", professionTags: ["actress","singer","producer"], nationality: "Indian", alive: true, birthYear: 1982, deathYear: null, field: "entertainment" }
+    ];
+
+    // ----- کھیل کی حالت -----
+    let currentPersonality = null;          // موجودہ منتخب شخصیت (آبجیکٹ)
+    let questionsAsked = 0;
+    let gameActive = true;
+    let hideSecret = false;                 // میزبان کی پرائیویسی کے لیے ٹوگل
+    
+    // DOM عناصر
+    const personalitySelect = document.getElementById("personalitySelect");
+    const applyBtn = document.getElementById("applyPersonalityBtn");
+    const secretDisplaySpan = document.getElementById("secretPersonalityDisplay");
+    const toggleHideBtn = document.getElementById("toggleHideBtn");
+    const questionInput = document.getElementById("questionInput");
+    const askBtn = document.getElementById("askBtn");
+    const guessBtn = document.getElementById("guessBtn");
+    const guessNameInput = document.getElementById("guessNameInput");
+    const resetGameBtn = document.getElementById("resetGameBtn");
+    const questionCounterSpan = document.getElementById("questionCounter");
+    const chatLogDiv = document.getElementById("chatLog");
+    const gameStatusSpan = document.getElementById("gameStatusMsg");
+
+    // پاپولیت سلیکٹ باکس
+    function populateSelect() {
+        personalitySelect.innerHTML = "";
+        PERSONALITIES_DATA.forEach(p => {
+            const option = document.createElement("option");
+            option.value = p.id;
+            option.textContent = `${p.name} (${p.professionTags[0] || "شخصیت"}, ${p.nationality})`;
+            personalitySelect.appendChild(option);
+        });
+    }
+
+    // شخصیت سیٹ کریں اور گیم ری سیٹ (نئے کھیل کا آغاز)
+    function setPersonalityAndReset(personalityId = null) {
+        let selectedId = personalityId !== null ? personalityId : parseInt(personalitySelect.value);
+        const newPersonality = PERSONALITIES_DATA.find(p => p.id === selectedId);
+        if (newPersonality) {
+            currentPersonality = { ...newPersonality };
+        } else {
+            // فال بیک
+            currentPersonality = { ...PERSONALITIES_DATA[0] };
+        }
+        // گیم ری سیٹ
+        questionsAsked = 0;
+        gameActive = true;
+        updateCounterDisplay();
+        updateSecretDisplay();
+        addChatMessage("🔄 نئی شخصیت منتخب: " + currentPersonality.name + " (میزبان کی سوچی ہوئی) — اب دوست سوال پوچھ سکتے ہیں۔", "answer-msg");
+        addChatMessage("🎯 کھیل دوبارہ شروع! باقی 20 سوالات۔ کمپیوٹر جواب دے گا (ہاں/نہیں/کہہ سکتے ہیں)", "answer-msg");
+        gameStatusSpan.innerHTML = "✅ کھیل فعال • پہچاننے کی کوشش کریں";
+        gameStatusSpan.style.background = "#facc15";
+        // صارف ان پٹ صاف کریں
+        questionInput.value = "";
+        guessNameInput.value = "";
+    }
+
+    // میزبان کی سکرین پر شخصیت کا نام دکھائیں / چھپائیں
+    function updateSecretDisplay() {
+        if (!currentPersonality) {
+            secretDisplaySpan.textContent = "———";
+            return;
+        }
+        if (hideSecret) {
+            secretDisplaySpan.textContent = "▪️▪️▪️ خفیہ ▪️▪️▪️";
+        } else {
+            secretDisplaySpan.textContent = currentPersonality.name;
+        }
+    }
+
+    toggleHideBtn.addEventListener("click", () => {
+        hideSecret = !hideSecret;
+        updateSecretDisplay();
+        addChatMessage(hideSecret ? "🔒 میزبان نے شخصیت کا نام چھپا لیا (صرف آپ کو پتہ)" : "🔓 میزبان نے شخصیت کا نام ظاہر کر دیا", "answer-msg");
+    });
+
+    // سوالات کی گنتی اپڈیٹ
+    function updateCounterDisplay() {
+        questionCounterSpan.textContent = `سوالات: ${questionsAsked} / 20`;
+        if (questionsAsked >= 20 && gameActive) {
+            gameActive = false;
+            gameStatusSpan.innerHTML = "❌ کھیل ختم! 20 سوالات مکمل۔ آپ شخصیت نہیں پہچان سکے۔ جواب: " + currentPersonality.name;
+            gameStatusSpan.style.background = "#ef4444";
+            addChatMessage(`⛔ براہ کرم! 20 سوالات ختم ہوگئے۔ شخصیت تھی: ${currentPersonality.name}`, "guess-msg");
+        }
+    }
+
+    // چیٹ لاگ میں شامل کریں
+    function addChatMessage(text, typeClass = "question-msg") {
+        const entry = document.createElement("div");
+        entry.className = `chat-entry ${typeClass}`;
+        entry.innerHTML = text;
+        chatLogDiv.appendChild(entry);
+        chatLogDiv.scrollTop = chatLogDiv.scrollHeight;
+    }
+
+    // ----- کمپیوٹر کا ذہین جواب (ہاں، نہیں، کہہ سکتے ہیں) -----
+    function getAnswerToQuestion(questionText, personality) {
+        if (!personality) return "کہہ سکتے ہیں (شخصیت سیٹ نہیں)";
+        const q = questionText.toLowerCase().trim();
+        
+        // صنف (gender)
+        if (/(کیا یہ مرد|کیا یہ مذکر|male|man|لڑکا|مرد ہے)/i.test(q) || (q.includes("مرد") && !q.includes("عورت"))) {
+            return personality.gender === "male" ? "ہاں" : "نہیں";
+        }
+        if (/(کیا یہ عورت|female|woman|خاتون|لڑکی)/i.test(q) && !q.includes("مرد")) {
+            return personality.gender === "female" ? "ہاں" : "نہیں";
+        }
+        
+        // زندہ / فوت شدہ
+        if (/(زندہ| alive |living|still alive|ہے زندہ|حیات)/i.test(q) && !q.includes("فوت")) {
+            return personality.alive === true ? "ہاں" : "نہیں";
+        }
+        if (/(فوت|مر چکے|died|dead|انتقال|وفات)/i.test(q)) {
+            return personality.alive === false ? "ہاں" : "نہیں";
+        }
+        
+        // پیشہ ورانہ (profession)
+        const professionKeywords = {
+            scientist: ["سائنسدان","سائنسی","سائنس","physicist","natural scientist","natural sciences","طبیعاتی"],
+            athlete: ["کھلاڑی","ایتھلیٹ","athlete","sports","footballer","basketball","فٹبال","بیسکٹ بال"],
+            singer: ["گلوکار","گانے","singer","musician","pop star","ریکارڈنگ"],
+            writer: ["مصنف","writer","author","شاعر","poet","playwright","ادبی"],
+            politician: ["سیاستدان","politician","president","وزیراعظم","رہنما"],
+            actor: ["اداکار","actress","actor","performer","فلمی"],
+            philanthropist: ["فلاحی","humanitarian","خیراتی","philanthropist","سماجی کارکن"],
+            entrepreneur: ["کاروباری","businessman","entrepreneur","innovator"]
+        };
+        
+        // چیک کریں کہ سوال میں کسی پیشے کا ذکر ہے؟
+        let matchedProfession = null;
+        for (const [profKey, keywords] of Object.entries(professionKeywords)) {
+            if (keywords.some(kw => q.includes(kw))) {
+                matchedProfession = profKey;
+                break;
+            }
+        }
+        if (matchedProfession) {
+            // دیکھیں personality کی ٹیگز میں یہ پیشہ ہے؟
+            const hasProf = personality.professionTags.some(tag => tag.toLowerCase().includes(matchedProfession) || 
+                (matchedProfession === "athlete" && (personality.professionTags.includes("athlete") || personality.professionTags.includes("footballer") || personality.professionTags.includes("basketball player"))) ||
+                (matchedProfession === "scientist" && personality.professionTags.includes("scientist")) ||
+                (matchedProfession === "writer" && (personality.professionTags.includes("writer") || personality.professionTags.includes("playwright"))) ||
+                (matchedProfession === "politician" && personality.professionTags.includes("politician")) ||
+                (matchedProfession === "singer" && (personality.professionTags.includes("singer") || personality.professionTags.includes("musician"))) ||
+                (matchedProfession === "entrepreneur" && personality.professionTags.includes("entrepreneur")) ||
+                (matchedProfession === "philanthropist" && personality.professionTags.includes("philanthropist"))
+            );
+            if (hasProf) return "ہاں";
+            else return "نہیں";
+        }
+        
+        // قومیت / ملک
+        const nationalityPatterns = ["امریکی", "american", "پاکستانی", "pakistani", "برطانوی", "british", "اطالوی", "italian", "مصری", "egyptian", "پرتگالی", "portuguese", "ارجنٹائن", "argentinian", "فرانسیسی", "french", "جرمن", "german", "بھارتی", "indian"];
+        for (let nat of nationalityPatterns) {
+            if (q.includes(nat)) {
+                const personNat = personality.nationality.toLowerCase();
+                if (personNat.includes(nat.toLowerCase()) || (nat === "امریکی" && personNat.includes("american")) ||
+                    (nat === "پاکستانی" && personNat.includes("pakistani")) ||
+                    (nat === "برطانوی" && personNat.includes("british")) ||
+                    (nat === "اطالوی" && personNat.includes("italian")) ||
+                    (nat === "مصری" && personNat.includes("egyptian")) ||
+                    (nat === "پرتگالی" && personNat.includes("portuguese")) ||
+                    (nat === "ارجنٹائن" && personNat.includes("argentinian")) ||
+                    (nat === "جرمن" && personNat.includes("german")) ||
+                    (nat === "فرانسیسی" && personNat.includes("french")) ||
+                    (nat === "بھارتی" && personNat.includes("indian"))) {
+                    return "ہاں";
+                } else {
+                    return "نہیں";
+                }
+            }
+        }
+        
+        // تاریخ پیدائش سے متعلق (پیدائش صدی/سال)
+        const yearMatch = q.match(/[1-2][0-9]{3}/);
+        if (yearMatch && (q.includes("پیدا") || q.includes("birth") || q.includes("born after") || q.includes("کے بعد پیدا") || q.includes("سے پہلے"))) {
+            const year = parseInt(yearMatch[0]);
+            if (!isNaN(year) && personality.birthYear) {
+                if (q.includes("بعد") || q.includes("after")) {
+                    return personality.birthYear > year ? "ہاں" : "نہیں";
+                } else if (q.includes("پہلے") || q.includes("before")) {
+                    return personality.birthYear < year ? "ہاں" : "نہیں";
+                }
+            }
+        }
+        // کھیل / کھیلوں سے متعلق
+        if (/(کھیل|sports|athlete|ball|basketball|football)/i.test(q)) {
+            const isSportsperson = personality.professionTags.some(t => t.includes("athlete") || t.includes("footballer") || t.includes("basketball"));
+            return isSportsperson ? "ہاں" : "نہیں";
+        }
+        
+        // اگر سوال میں کوئی خاص چیز جیسے "نوبل انعام" ؟ ہماری ڈیٹا میں نہیں تو "کہہ سکتے ہیں"
+        if (/(nobel|آسکر|oscar|ایوارڈ|گریمی)/i.test(q)) {
+            // صرف چند شخصیات کے پاس ایوارڈ ہو سکتے ہیں، لیکن بہتر "کہہ سکتے ہیں" کیونکہ تمام کے لیے یقینی نہیں
+            if (personality.name === "Marie Curie" || personality.name === "Malala Yousafzai" || personality.name === "Albert Einstein") {
+                // ان کے پاس نوبل / اعزاز ہے
+                if (personality.name === "Marie Curie" || personality.name === "Malala Yousafzai") return "ہاں";
+                if (personality.name === "Albert Einstein" && q.includes("nobel")) return "ہاں";
+                return "کہہ سکتے ہیں";
+            }
+            return "کہہ سکتے ہیں";
+        }
+        
+        // اگر کوئی اور سوال جیسے "کیا وہ مشہور ہے؟" یا زیادہ عام ہو تو کہہ سکتے ہیں
+        // ڈیفالٹ جواب "کہہ سکتے ہیں" (مطابق ضرورت)
+        return "کہہ سکتے ہیں";
+    }
+    
+    // سوال پوچھنے کا طریقہ کار (دوست کی طرف سے)
+    function askQuestion() {
+        if (!gameActive) {
+            addChatMessage("کھیل ختم ہو چکا! براہ کرم 'شخصیت سیٹ کریں' یا ری سیٹ بٹن دبائیں۔", "guess-msg");
+            return;
+        }
+        if (questionsAsked >= 20) {
+            addChatMessage("⚠️ 20 سوالات ہو چکے، اب مزید سوال نہیں پوچھ سکتے۔", "guess-msg");
+            return;
+        }
+        const questionText = questionInput.value.trim();
+        if (questionText === "") {
+            addChatMessage("❓ براہ کرم کوئی سوال تحریر کریں۔", "question-msg");
+            return;
+        }
+        // سوال ریکارڈ کریں
+        questionsAsked++;
+        updateCounterDisplay();
+        if (!gameActive) return; // اگر 20 کے بعد غیر فعال ہو جائے تو روکیں
+        
+        const answer = getAnswerToQuestion(questionText, currentPersonality);
+        addChatMessage(`📢 سوال (${questionsAsked}/20): "${questionText}"`, "question-msg");
+        addChatMessage(`🤖 کمپیوٹر کا جواب: ${answer}`, "answer-msg");
+        
+        questionInput.value = "";
+        // چیک کریں کہ آیا ابھی کھیل ختم ہوگیا 20 تک
+        if (questionsAsked >= 20) {
+            gameActive = false;
+            gameStatusSpan.innerHTML = `❌ کھیل ختم! 20 سوالات مکمل۔ شخصیت تھی: ${currentPersonality.name}`;
+            gameStatusSpan.style.background = "#ef4444";
+            addChatMessage(`🏁 کھیل ختم۔ درست شخصیت: ${currentPersonality.name}`, "guess-msg");
+        }
+    }
+    
+    // اندازہ لگانے کا فنکشن
+    function makeGuess() {
+        if (!gameActive) {
+            addChatMessage("کھیل ختم یا غیر فعال، نیا کھیل شروع کریں", "guess-msg");
+            return;
+        }
+        const guessName = guessNameInput.value.trim();
+        if (guessName === "") {
+            addChatMessage("براہ کرم شخصیت کا نام لکھیں (مثلاً Albert Einstein)", "guess-msg");
+            return;
+        }
+        // اندازہ لگانے پر ایک سوال شمار ہوگا (معمول کے مطابق 20 سوالوں میں شمار)
+        if (questionsAsked >= 20) {
+            addChatMessage("پہلے ہی 20 سوالات ختم، اندازہ نہیں لگا سکتے۔", "guess-msg");
+            return;
+        }
+        questionsAsked++;
+        updateCounterDisplay();
+        
+        const isCorrect = (guessName.toLowerCase().trim() === currentPersonality.name.toLowerCase());
+        if (isCorrect) {
+            addChatMessage(`🎉 اندازہ: "${guessName}" - بالکل صحیح! آپ نے ${questionsAsked} سوالات/اندازوں میں جیت لیا۔`, "guess-msg");
+            gameStatusSpan.innerHTML = `🏆 مبارک! آپ نے شخصیت ${currentPersonality.name} پہچان لی! 🏆`;
+            gameStatusSpan.style.background = "#16a34a";
+            gameActive = false;
+        } else {
+            addChatMessage(`❌ اندازہ: "${guessName}" - غلط جواب! یہ شخصیت نہیں ہے۔ (سوال نمبر ${questionsAsked})`, "guess-msg");
+            if (questionsAsked >= 20) {
+                gameActive = false;
+                gameStatusSpan.innerHTML = `⛔ ناکام! 20 مواقع ختم۔ صحیح شخصیت: ${currentPersonality.name}`;
+                gameStatusSpan.style.background = "#dc2626";
+                addChatMessage(`مکمل ناکامی۔ خفیہ شخصیت: ${currentPersonality.name}`, "answer-msg");
+            }
+        }
+        guessNameInput.value = "";
+        if (!gameActive && !isCorrect) {
+            // already handled
+        } else if (!gameActive && isCorrect) {
+            // jit gaya
+        }
+        // اگر گیم فعال نہیں تو مزید سوال نہیں ہوں گے
+    }
+    
+    function resetGame() {
+        if (!currentPersonality) {
+            setPersonalityAndReset(PERSONALITIES_DATA[0].id);
+        } else {
+            setPersonalityAndReset(currentPersonality.id);
+        }
+        // صاف چیٹ لاگ رکھیں مگر دو خوش آمدید پیغام
+        chatLogDiv.innerHTML = "";
+        addChatMessage("🎮 گیم ری سیٹ ہوگیا! میزبان نے وہی شخصیت رکھی/نیا انتخاب کیا۔ 20 سوالات نئے سرے سے شروع کریں۔", "answer-msg");
+        addChatMessage("💡 یاد رکھیں: ہر سوال پر کمپیوٹر 'ہاں'، 'نہیں' یا 'کہہ سکتے ہیں' جواب دے گا۔", "answer-msg");
+    }
+    
+    // ایونٹ لسٹنرز
+    applyBtn.addEventListener("click", () => {
+        const newId = parseInt(personalitySelect.value);
+        setPersonalityAndReset(newId);
+    });
+    
+    askBtn.addEventListener("click", askQuestion);
+    guessBtn.addEventListener("click", makeGuess);
+    resetGameBtn.addEventListener("click", resetGame);
+    
+    // انٹر کی سپورٹ
+    questionInput.addEventListener("keypress", (e) => { if (e.key === "Enter") askQuestion(); });
+    guessNameInput.addEventListener("keypress", (e) => { if (e.key === "Enter") makeGuess(); });
+    
+    // ابتدائی ترتیب
+    populateSelect();
+    // ڈیفالٹ شخصیت Albert Einstein
+    setPersonalityAndReset(1);
+</script>
+</body>
+</html>
